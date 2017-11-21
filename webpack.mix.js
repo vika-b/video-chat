@@ -28,5 +28,6 @@ mix.webpackConfig({
 mix.js([
     'resources/assets/ts/polyfills.ts',
     'resources/assets/ts/vendor.ts',
+    'resources/assets/js/peer.min.js',
     'resources/assets/ts/main.ts'
 ], 'public/js/app.js');

@@ -17,6 +17,7 @@ const appRoutes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'video-chat', component: VideoChatComponent },
     { path: '', component: HomepageComponent, canActivate: [ AuthGuard ] },
+    // { path: '', component: HomepageComponent},
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
