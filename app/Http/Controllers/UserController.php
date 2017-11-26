@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\UserInfo;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use JWTAuth;
 use App\User;
 use App\Role;
 use JWTAuthException;
 use Validator;
+use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -152,5 +156,82 @@ class UserController extends Controller
             ]);
         }
         return response()->json(['success'=> false, 'error'=> "Verification code is invalid."]);
+    }
+
+    public function getProfileData(Request $request)
+    {
+//        die($request->token);
+        $check = DB::table('user_info')->where('user_id', $request->id)->first();
+
+        if(!is_null($check))
+        {
+            return response()->json([
+                'success'=> true,
+                'data'=> $check
+            ]);
+        }
+        return response()->json(['error'=> "Empty Data!", 'id' => $request->id]);
+    }
+
+    public function updateProfileData(Request $request)
+    {
+        $user_info = UserInfo::updateOrCreate(
+            ['user_id' => $request->get('user_id')],
+            [
+                'user_id' => $request->get('user_id'),
+                'phone' => $request->get('phone'),
+                'university' => $request->get('university'),
+                'about_me' => $request->get('about_me'),
+                'address' => $request->get('address'),
+                'facebook' => $request->get('facebook'),
+                'twitter' => $request->get('twitter'),
+                'linkedin' => $request->get('linkedin'),
+                'google_plus' => $request->get('google_plus'),
+                'github' => $request->get('github'),
+            ]);
+
+        User::where('id', $request->get('user_id'))
+            ->update([
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+            ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Updated successfully'
+        ]);
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $avatar = $request->get('avatar');
+        $user_id = $request->get('user_id');
+
+        $png_name = "user_" . $user_id . "_" . time() . ".png";
+        $png_name_cropped = "user_" . $user_id . "_" . time() . "_300X300.png";
+        $png_path = 'img/profiles/' . $user_id . '/';
+
+        $path = public_path($png_path . $png_name);
+        $path_cropped = public_path($png_path . $png_name_cropped);
+
+        if (!File::isDirectory(public_path($png_path)))
+            File::MakeDirectory(public_path($png_path), 0777, true);
+
+        Image::make($avatar)->save($path);
+        Image::make($avatar)->crop(300, 300)->save($path_cropped);
+
+        $user_info = UserInfo::updateOrCreate(
+            ['user_id' => $user_id],
+            [
+                'user_id' => $user_id,
+                'profile_pic' => $user_id . '/' . $png_name_cropped
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Updated successfully',
+            'profile_pic' => 'img/profiles/' . $user_id . '/' . $png_name_cropped,
+        ]);
     }
 }

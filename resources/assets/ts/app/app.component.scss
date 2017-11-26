@@ -7,11 +7,15 @@ body {
 }
 
 // Wrappers
-
+* {
+  outline: 0;
+}
 #wrapper {
   width: 100%;
 }
-
+a, a:hover, a:active {
+  text-decoration: none;
+}
 #page-wrapper {
   padding: 0 15px;
   min-height: 568px;

@@ -1,84 +1,130 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import 'rxjs/add/operator/toPromise';
+
+import { AuthenticationService } from "../../services/authentication.service";
 
 @Component({
     selector: 'student-profile-app',
     template: require('./student.profile.component.html'),
     styles: [`${require('./student.profile.component.scss')}`]
 })
-export class VideoChatComponent implements OnInit {
-    peer: any;
-    mypeerid: any;
-    anotherid: any;
+export class StudentProfileComponent implements OnInit {
+    user: any = {};
+    user_info: any = {};
+    profile_form: FormGroup;
+    avatar_form: FormGroup;
+    user_pic: any;
+    errors: Array<any>;
 
-    @ViewChild('myvideo') myVideo: any;
+    @ViewChild('button') submit_btn: ElementRef;
+    @ViewChild('avatar') fileInput: ElementRef;
 
-    constructor() { }
+    constructor(
+        private fb: FormBuilder,
+        private authService: AuthenticationService
+    ) {
+        this.user = {
+            email: '',
+            name: '',
+            created_at: '',
+        };
+        this.user_info = {
+            phone: '',
+            university: '',
+            about_me: '',
+            address: '',
+            facebook: '',
+            twitter: '',
+            linkedin: '',
+            google_plus: '',
+            github: '',
+            profile_pic: '',
+        };
 
-    ngOnInit() {
-        let video = this.myVideo.nativeElement;
-
-        this.peer = new Peer({
-            host: location.hostname
-        });
-
-        setTimeout(() => {
-            this.mypeerid = this.peer.id;
-        }, 3000);
-
-        this.peer.on('connection', function (conn: any) {
-            console.log('Connection opening');
-            conn.on('open', function () {
-                console.log('Connection is open');
-                conn.on('data', function (data: any) {
-                    console.log(data);
-                });
+        const user_infos = this.authService.getUser().then((res: any) => {
+            this.user = res;
+            this.authService.getUserInfo(res.id).then( (res: any) => {
+                console.log(res);
+                if(!res.error) {
+                    this.user_info = res.data;
+                    this.user_pic = '/img/profiles/'+ this.user_info.profile_pic;
+                }
+                this.iniForm();
             });
         });
+    }
 
-        const $this = this;
-        const n = <any>navigator;
-        n.getUserMedia = ( n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia );
+    iniForm() {
+        this.profile_form = this.fb.group({
+            email: [this.user.email, [Validators.email]],
+            name: [this.user.name],
+            phone: [this.user_info.phone,
+                [
+                    // Validators.pattern('[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}')
+                    Validators.pattern('[0-9]{10}')
+                ]
+            ],
+            university: [this.user_info.university],
+            about_me: [this.user_info.about_me],
+            address: [this.user_info.address],
+            facebook: [this.user_info.facebook],
+            twitter: [this.user_info.twitter],
+            linkedin: [this.user_info.linkedin],
+            google_plus: [this.user_info.google_plus],
+            github: [this.user_info.github],
+            token: [this.authService.token],
+            user_id: [this.user.id],
+        });
 
-        this.peer.on('call', function (call: any) {
-            n.getUserMedia({video: true, audio: true}, function(stream: any) {
-                call.answer(stream);
-                call.on('stream', function(remotestream: any){
-                    video.src = URL.createObjectURL(remotestream);
-                    video.play();
-                })
-            }, function(err: any) {
-                console.log('Failed to get stream', err);
-            })
+        this.avatar_form = this.fb.group({
+            avatar: null,
+            user_id: [this.user.id],
+            token: [this.authService.token],
         });
     }
 
-    connect() {
-        const conn = this.peer.connect(this.anotherid);
-        console.log(conn);
-        conn.on('open', function(){
-            console.log(conn);
-            conn.send('hi!');
-        });
+    // updateProfile(): Promise <any> {
+    updateProfile() {
+        const formModel = this.profile_form.value;
+
+        if (this.profile_form.valid) {
+            this.authService.updateUserInfo(formModel);
+            /*return this.authService.register(formModel).then(res => {
+                if (res) {
+                    // this.router.navigate(['/']);
+                } else {
+                    console.log('Username or password is incorrect');
+                }
+            });*/
+        }
     }
 
-    videoconnect(){
-        let video = this.myVideo.nativeElement;
-        var localvar = this.peer;
-        var fname = this.anotherid;
+    fileChange(event: any) {
+        let reader = new FileReader();
+        const formModel = this.avatar_form.value;
+        if(event.target.files && event.target.files.length > 0) {
+            let file = event.target.files[0];
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                this.authService.updateUserPic(reader.result, this.user.id).then((res: any) => {
+                    console.log(JSON.parse(res._body));
+                    let result = JSON.parse(res._body);
+                    if(result.status) {
+                        this.user_pic = result.profile_pic;
+                    }
+                    else {
+                        this.errors.push('Whoops, looks like something went wrong.')
+                    }
+                    console.log(result);
+                });
+            };
 
-        const n = <any>navigator;
-        const $this = this;
+            console.log(this.avatar_form);
+        }
+    }
 
-        n.getUserMedia = ( n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia  || n.msGetUserMedia );
-
-        n.getUserMedia({video: true, audio: true}, function(stream: any) {
-            var call = $this.peer.call($this.anotherid, stream);
-            call.on('stream', function(remotestream: any) {
-                video.src = URL.createObjectURL(remotestream);
-                video.play();
-            })
-        }, function(err: any){
-            console.log('Failed to get stream', err);
-        })
+    ngOnInit() {
+        this.iniForm();
     }
 }

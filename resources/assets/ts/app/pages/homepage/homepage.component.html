@@ -1,18 +1,3 @@
-<section id="logo-section" class="text-center">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <a routerLink="/">
-                    <div class="logo text-center">
-                        <h1>{{ username }}</h1>
-                        <span>Welcome to your profile page</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
 <div class="mainbody-section text-center">
     <div class="container">
         <div class="row">
@@ -24,9 +9,9 @@
                     </a>
                 </div>
                 <div class="menu-item blue">
-                    <a href="#feature-modal" data-toggle="modal">
-                        <i class="fa fa-magic"></i>
-                        <p>Feature</p>
+                    <a routerLink="/student-profile" data-toggle="modal">
+                        <i class="fa fa-user"></i>
+                        <p>Profile</p>
                     </a>
                 </div>
                 <div class="menu-item green">
@@ -37,7 +22,7 @@
                 </div>
                 <div class="menu-item light-red">
                     <a href="#about-modal" data-toggle="modal">
-                        <i class="fa fa-user"></i>
+                        <i class="fa fa-magic"></i>
                         <p>About Us</p>
                     </a>
                 </div>

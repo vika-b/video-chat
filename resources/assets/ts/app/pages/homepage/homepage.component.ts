@@ -8,11 +8,6 @@ import { AuthenticationService } from "../../services/authentication.service";
     styles: [`${require('./homepage.component.scss')}`]
 })
 export class HomepageComponent {
-    public username: string;
 
-    constructor(private authService: AuthenticationService) {
-        const user = this.authService.getUser().then(res => {
-            this.username = res.name;
-        });
-    }
+    constructor() { }
 }

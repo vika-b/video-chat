@@ -24,7 +24,7 @@
     "rxjs": "5.0.1",
     "socket.io": "1.4.5",
     "ts-loader": "^2.1.0",
-    "typescript": "^2.3.4",
+    "typescript": "2.3.4",
     "webrtc-adapter": "^6.0.0",
     "zone.js": "^0.8.4"
   },

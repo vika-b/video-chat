@@ -1,5 +1,168 @@
-<h1>My id - {{mypeerid}}</h1>
-<input type="text" [(ngModel)]="anotherid">
-<button (click)="connect()">Connect</button>
-<button (click)="videoconnect()">VideoChat</button>
-<video #myvideo></video>
+<div class="section-modal">
+    <div class="modal-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 errors">
+                    <p *ngFor="let item of errors; let i=index;">{{ item }}</p>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                    <div class="profile-pic">
+                        <img src="{{ user_pic }}" alt="{{ user.name }}">
+                        <div class="ico-new-pic" (click)="avatar.click()">
+                            <i class="fa fa-camera"></i>
+                        </div>
+                        <form enctype="multipart/form-data" name="updateAvatar" id="updateAvatar" role="form" novalidate [formGroup]="avatar_form">
+                            <input type="file" name="avatar" formControlName="avatar" #avatar style="display: none;"
+                                   (change)="fileChange($event)" accept=".jpg,.png,.jpeg" />
+                            <input type="hidden" value="{{ user.id }}" name="user_id" formControlName="user_id">
+                            <input type="submit" class="pull-right btn btn-sm btn-primary" #button style="display: none;">
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-9 col-xs-12">
+                    <div class="section-title">
+                        <h3>Edit my profile</h3>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row white-bg">
+                <div class="col-md-4 col-xs-12">
+                    <div class="footer-contact-info">
+                        <h4>Current info</h4>
+                        <ul>
+                            <li *ngIf="user.name != ''"><strong>Name:</strong> {{ user.name }}</li>
+                            <li *ngIf="user.email != ''"><strong>E-mail:</strong> {{ user.email }}</li>
+                            <li *ngIf="user_info.phone != ''"><strong>Phone:</strong> {{ user_info.phone }}</li>
+                            <li *ngIf="user.created_at != ''"><strong>Create account:</strong> {{ user.created_at }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <div class="footer-social text-center">
+                        <ul>
+                            <li *ngIf="user_info.twitter">
+                                <a href="{{ user_info.twitter }}" target="_blank"><i class="fa fa-twitter"></i></a>
+                            </li>
+                            <li *ngIf="user_info.facebook">
+                                <a href="{{ user_info.facebook }}" target="_blank"><i class="fa fa-facebook"></i></a>
+                            </li>
+                            <li *ngIf="user_info.linkedin">
+                                <a href="{{ user_info.linkedin }}" target="_blank"><i class="fa fa-linkedin"></i></a>
+                            </li>
+                            <li *ngIf="user_info.google_plus">
+                                <a href="{{ user_info.google_plus }}" target="_blank"><i class="fa fa-google-plus"></i></a>
+                            </li>
+                            <li *ngIf="user_info.github">
+                                <a href="{{ user_info.github }}" target="_blank"><i class="fa fa-github"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <div class="footer-contact-info">
+                        <h4>Schedule</h4>
+                        <ul>
+                            <li><strong>Mon-Wed :</strong> 9 am to 5 pm</li>
+                            <li><strong>Thurs-Fri :</strong> 12 pm to 10 pm</li>
+                            <li><strong>Sat :</strong> 9 am to 3 pm</li>
+                            <li><strong>Sunday :</strong> Closed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 80px;">
+                <div class="col-md-12">
+                    <form name="updateProfile" id="updateProfile" role="form" novalidate [formGroup]="profile_form" (submit)="updateProfile()">
+                        <!--<p>Form value: {{ profile_form.value | json }}</p>-->
+                        <!--<p>Form status: {{ profile_form.status | json }}</p>-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <textarea class="form-control" placeholder="About Me" name="about_me" formControlName="about_me"
+                                              type="text" autofocus [class.error]="!profile_form.controls['about_me'].valid && profile_form.controls['about_me'].dirty">{{ user_info.about_me }}</textarea>
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Full name" name="name" formControlName="name" type="text"
+                                           [class.error]="!profile_form.controls['name'].valid && profile_form.controls['name'].dirty" value="{{ user.name }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="E-mail" name="email" formControlName="email" type="email"
+                                           [class.error]="!profile_form.controls['email'].valid && profile_form.controls['email'].dirty" value="{{ user.email }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Phone" name="phone" formControlName="phone" type="text"
+                                           [class.error]="!profile_form.controls['phone'].valid && profile_form.controls['phone'].dirty" value="{{ user_info.phone }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="University" name="university" formControlName="university" type="text"
+                                           [class.error]="!profile_form.controls['university'].valid && profile_form.controls['university'].dirty" value="{{ user_info.university }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Address" name="address" formControlName="address" type="text"
+                                           [class.error]="!profile_form.controls['address'].valid && profile_form.controls['address'].dirty" value="{{ user_info.address }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Facebook link" name="facebook" formControlName="facebook" type="text"
+                                           [class.error]="!profile_form.controls['facebook'].valid && profile_form.controls['facebook'].dirty" value="{{ user_info.facebook }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Twitter link" name="twitter" formControlName="twitter" type="text"
+                                           [class.error]="!profile_form.controls['twitter'].valid && profile_form.controls['twitter'].dirty" value="{{ user_info.twitter }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Linkedin link" name="linkedin" formControlName="linkedin" type="text"
+                                           [class.error]="!profile_form.controls['linkedin'].valid && profile_form.controls['linkedin'].dirty" value="{{ user_info.linkedin }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Google Plus link" name="google_plus" formControlName="google_plus" type="text"
+                                           [class.error]="!profile_form.controls['google_plus'].valid && profile_form.controls['google_plus'].dirty" value="{{ user_info.google_plus }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Github link" name="github" formControlName="github" type="text"
+                                           [class.error]="!profile_form.controls['github'].valid && profile_form.controls['github'].dirty" value="{{ user_info.github }}" />
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12 text-center">
+                                <div id="success"></div>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
