@@ -1,0 +1,25 @@
+<div class="section-modal fade in" id="portfolio-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: block;">
+    <div class="modal-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 text-right new-class">
+                    <a routerLink="/edit-class/{{ data.id }}" class="btn btn-primary">Edit Class</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="portfolio-item">
+                    <img src="/img/classes/{{ data.picture }}" class="img-responsive" alt="{{ data.name }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 white-bg">
+                    <div class="section-title text-center">
+                        <h3>{{ data.name }}</h3>
+                        <p>Start date: {{ data.enroll_date | date:'short' }}<br />Finish date: {{ data.finish_date | date:'short' }}</p>
+                        <p>{{ data.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

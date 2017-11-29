@@ -1,21 +1,24 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import 'rxjs/add/operator/toPromise';
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 
 import { AuthenticationService } from "../../services/authentication.service";
 
 @Component({
-    selector: 'new-class-app',
-    template: require('./new.class.component.html'),
-    styles: [`${require('./new.class.component.scss')}`]
+    selector: 'edit-class-app',
+    template: require('./edit.class.component.html'),
+    styles: [`${require('./edit.class.component.scss')}`]
 })
-export class NewClassComponent implements OnInit {
+export class EditClassComponent implements OnInit {
     class: any = {};
     user: any = {};
+    data: any = {
+        picture: 'default.png'
+    };
+    class_id: any = 1;
     class_pic: any = '';
     errors: Array<any>;
-    pickerColor: string = '#BA0800';
     date: Date = new Date();
     input7Moment: any = [this.date, new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0)];
 
@@ -28,8 +31,20 @@ export class NewClassComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private authService: AuthenticationService,
-        private router: Router
+        private router: Router,
+        private activatedRoute: ActivatedRoute
     ) {
+        this.activatedRoute.params.subscribe(params => {
+            this.class_id = params['id'];
+            this.authService.getClass(this.class_id).then((res: any) => {
+                const result = JSON.parse(res);
+                this.data = result.data;
+                this.class_pic = '/img/classes/'+this.data.picture;
+                console.log(this.class_id);
+                console.log(this.data);
+            });
+        });
+
         this.class = {
             name: '',
             description: '',
@@ -80,11 +95,11 @@ export class NewClassComponent implements OnInit {
         }
     }
 
-    createNewClass() {
+    editClass() {
         const formModel = this.new_class_form.value;
         if (this.new_class_form.valid) {
             console.log(formModel);
-            this.authService.createClass(formModel, this.class_pic).then((res) => {
+            this.authService.editClass(formModel, this.class_pic, this.class_id).then((res) => {
                 console.log(res);
                 const result = JSON.parse(res);
                 if(result.status) {

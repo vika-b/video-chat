@@ -28,5 +28,7 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     Route::post('user/update/profile/data', 'UserController@updateProfileData');
     Route::post('user/update/update/avatar', 'UserController@updateAvatar');
     Route::post('user/create/class', 'UserController@createClass');
-    Route::get('class', 'UserController@getClass');
+    Route::get('user/get/classes/{user_id}', 'UserController@getClasses');
+    Route::get('user/get/class/{class_id}', 'UserController@getClass');
+    Route::post('user/edit/class/{class_id}', 'UserController@editClass');
 });

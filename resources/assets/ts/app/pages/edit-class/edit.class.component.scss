@@ -1,0 +1,93 @@
+.new-class {
+  margin-bottom: 30px;
+}
+.class-pic.opacity  .ico-new-pic {
+  opacity: 1;
+}
+.class-pic {
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+  max-height: 300px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+.class-pic img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  position: absolute;
+  top: -9999px;
+  bottom: -9999px;
+  right: -9999px;
+  left: -9999px;
+  margin: auto;
+}
+.ico-new-pic i {
+  line-height: 1;
+  font-size: 60px;
+  color: #999;
+  height: 60px;
+  width: 60px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  margin: auto;
+}
+
+datetime-popup > .dropdown .glyphicon {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+datetime-popup > .dropdown timepicker {
+  display: flex;
+  justify-content: center;
+}
+
+datetime-popup > .dropdown .bg-faded {
+  border:0;
+  background-color: #fff;
+}
+
+datetime-popup > .dropdown datepicker .btn-secondary {
+  background-color: #fff;
+  border: 0;
+  color: #000;
+}
+
+datetime-popup > .dropdown datepicker button.active {
+  background-color: #ddd;
+}
+
+datetime-popup > .dropdown .glyphicon.glyphicon-remove-circle:before {
+  content: "\f05c";
+}
+
+datetime-popup > .dropdown .glyphicon.glyphicon-chevron-down:before {
+  content: "\f078";
+}
+
+datetime-popup > .dropdown .glyphicon.glyphicon-chevron-up:before {
+  content: "\f077";
+}
+
+datetime-popup > .dropdown .glyphicon.glyphicon-chevron-left:before {
+  content: "\f053";
+}
+
+datetime-popup > .dropdown .glyphicon.glyphicon-chevron-right:before {
+  content: "\f054";
+}
+
+datetime-popup > .dropdown .glyphicon.hidden {
+  display: none !important;
+}

@@ -19,7 +19,7 @@ class CreateClassesTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('enroll_date');
-            $table->string('schedule_date')->nullable();
+            $table->string('schedule_date');
             $table->string('finish_date');
             $table->timestamps();
         });

@@ -17,6 +17,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { StudentClasseseComponent } from "./pages/student-classes/student.classes.component";
 import { TeacherClasseseComponent } from "./pages/teacher-classes/teacher.classes.component";
 import { NewClassComponent } from "./pages/new-class/new.class.component";
+import { ClassComponent } from "./pages/class/class.component";
+import { EditClassComponent } from "./pages/edit-class/edit.class.component";
 
 const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -26,8 +28,9 @@ const appRoutes: Routes = [
     { path: 'student-classes', component: StudentClasseseComponent },
     { path: 'teacher-classes', component: TeacherClasseseComponent },
     { path: 'new-class', component: NewClassComponent },
+    { path: 'edit-class/:id', component: EditClassComponent },
+    { path: 'class/:id', component: ClassComponent },
     { path: '', component: HomepageComponent, canActivate: [ AuthGuard ] },
-    // { path: '', component: HomepageComponent},
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
@@ -55,7 +58,9 @@ const appRoutes: Routes = [
         StudentProfileComponent,
         StudentClasseseComponent,
         TeacherClasseseComponent,
-        NewClassComponent
+        NewClassComponent,
+        ClassComponent,
+        EditClassComponent
     ],
     providers: [
         AuthenticationService,

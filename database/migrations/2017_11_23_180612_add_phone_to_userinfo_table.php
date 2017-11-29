@@ -26,7 +26,7 @@ class AddPhoneToUserinfoTable extends Migration
     public function down()
     {
         Schema::table('user_info', function (Blueprint $table) {
-            //
+            $table->dropColumn('phone');
         });
     }
 }

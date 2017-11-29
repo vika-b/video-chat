@@ -123,18 +123,15 @@ export class AuthenticationService {
             });
     }
 
-    getClass(): Promise<any> {
+    getClasses(user_id: any): Promise<any> {
         const headers = new Headers();
         headers.set('Content-Type', 'application/json');
         headers.set('token', this.token);
 
-        return this.http.get('/api/class', { search: { token: this.token } }).toPromise().then(
-            res => {
-                let data = {
-                    'user': res.json().result,
-                    'role': res.json().role
-                };
-                return data;
+        return this.http.get('/api/user/get/classes/' + user_id, { search: { token: this.token } }).toPromise().then(
+            (res: any) => {
+                // console.log(res);
+                return res._body;
             }
         );
     }
@@ -172,4 +169,33 @@ export class AuthenticationService {
             });
     }
 
+    getClass(class_id: any): Promise<any> {
+        const headers = new Headers();
+        headers.set('Content-Type', 'application/json');
+        headers.set('token', this.token);
+
+        return this.http.get('/api/user/get/class/' + class_id, { search: { token: this.token } }).toPromise().then(
+            (res: any) => {
+                // console.log(res);
+                return res._body;
+            }
+        );
+    }
+
+    editClass(data: any, picture: any, class_id: any): Promise<any> {
+        const headers = new Headers({'Content-Type': 'application/json'});
+        headers.set('token', this.token);
+
+        const request = {
+            'data': data,
+            'picture': picture,
+            'token': this.token
+        };
+
+        return this.http.post('/api/user/edit/class/' + class_id, JSON.stringify(request), {headers: headers})
+            .toPromise()
+            .then((res: any)=> {
+                return res._body;
+            });
+    }
 }

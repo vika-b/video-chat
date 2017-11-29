@@ -241,8 +241,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function getClass(Request $request)
+    public function getClasses($user_id)
     {
+        $class_ids = array();
+        $classes_ids = DB::table('classes_user')->select('classes_id')->where('user_id',$user_id)->get();
+        if(!empty($classes_ids)) {
+            foreach ($classes_ids as $classes_id) {
+                $class_ids[] = $classes_id->classes_id;
+            }
+        }
+        $classes = Classes::find($class_ids);
+
+        return response()->json([
+            'success'=> true,
+            'data'=> $classes
+        ]);
     }
 
     public function createClass(Request $request)
@@ -258,7 +271,50 @@ class UserController extends Controller
         if (!File::isDirectory(public_path($png_path)))
             File::MakeDirectory(public_path($png_path), 0777, true);
 
-        Image::make($avatar)->save($path);
+        Image::make($avatar)->resize(1024, 567)->save($path);
+
+        $classes = Classes::create([
+            'picture' => $user_id . '/' . $png_name,
+            'name' => $req_data['class_name'],
+            'description' => $req_data['class_description'],
+            'enroll_date' => $req_data['date_range'][0],
+            'finish_date' => $req_data['date_range'][1]
+        ]);
+
+        $classes->users()->attach($user_id);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Updated successfully',
+            'picture' => 'img/classes/' . $user_id . '/' . $png_name,
+        ]);
+    }
+
+    public function getClass($class_id)
+    {
+        $class = Classes::find((int)$class_id);
+
+        return response()->json([
+            'success'=> true,
+            'data'=> $class
+        ]);
+    }
+
+    public function editClass(Request $request)
+    {
+        dd($request->get('id'));
+        $req_data = $request->get('data');
+        $avatar = $request->get('picture');
+
+        $user_id = $req_data['user_id'];
+        $png_name = "class_" . $user_id . "_" . time() . ".png";
+        $png_path = 'img/classes/' . $user_id . '/';
+        $path = public_path($png_path . $png_name);
+
+        if (!File::isDirectory(public_path($png_path)))
+            File::MakeDirectory(public_path($png_path), 0777, true);
+
+        Image::make($avatar)->resize(1024, 567)->save($path);
 
         $classes = Classes::create([
             'picture' => $user_id . '/' . $png_name,

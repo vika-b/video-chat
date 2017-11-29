@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddTwitterToUserInfoTable extends Migration
+class ModifyClassesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddTwitterToUserInfoTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_info', function (Blueprint $table) {
-            $table->string('twitter')->nullable();
+        Schema::table('classes', function (Blueprint $table) {
+            $table->text('description')->nullable()->change();
         });
     }
 
@@ -25,8 +25,5 @@ class AddTwitterToUserInfoTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_info', function (Blueprint $table) {
-            $table->dropColumn('twitter');
-        });
     }
 }
