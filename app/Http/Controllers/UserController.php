@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes;
 use App\UserInfo;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -133,7 +134,12 @@ class UserController extends Controller
     public function getAuthUser(Request $request)
     {
         $user = JWTAuth::toUser($request->token);
-        return response()->json(['result' => $user]);
+        $role = DB::table('role_user')->select('*')->where('user_id', $user->id)->get()->first();
+
+        return response()->json([
+            'result' => $user,
+            'role' => $role
+        ]);
     }
 
     public function verifyUser($verification_code)
@@ -232,6 +238,42 @@ class UserController extends Controller
             'status' => true,
             'message' => 'Updated successfully',
             'profile_pic' => 'img/profiles/' . $user_id . '/' . $png_name_cropped,
+        ]);
+    }
+
+    public function getClass(Request $request)
+    {
+    }
+
+    public function createClass(Request $request)
+    {
+        $req_data = $request->get('data');
+        $avatar = $request->get('picture');
+
+        $user_id = $req_data['user_id'];
+        $png_name = "class_" . $user_id . "_" . time() . ".png";
+        $png_path = 'img/classes/' . $user_id . '/';
+        $path = public_path($png_path . $png_name);
+
+        if (!File::isDirectory(public_path($png_path)))
+            File::MakeDirectory(public_path($png_path), 0777, true);
+
+        Image::make($avatar)->save($path);
+
+        $classes = Classes::create([
+            'picture' => $user_id . '/' . $png_name,
+            'name' => $req_data['class_name'],
+            'description' => $req_data['class_description'],
+            'enroll_date' => $req_data['date_range'][0],
+            'finish_date' => $req_data['date_range'][1]
+        ]);
+
+        $classes->users()->attach($user_id);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Updated successfully',
+            'picture' => 'img/classes/' . $user_id . '/' . $png_name,
         ]);
     }
 }

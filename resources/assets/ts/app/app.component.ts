@@ -12,7 +12,7 @@ export class AppComponent {
 
     constructor(private authService: AuthenticationService) {
         const user = this.authService.getUser().then(res => {
-            this.username = res.name;
+            this.username = res.user.name;
         });
     }
 }

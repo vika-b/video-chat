@@ -69,7 +69,11 @@ export class AuthenticationService {
 
         return this.http.get('/api/user', { search: { token: this.token } }).toPromise().then(
             res => {
-                return res.json().result;
+                let data = {
+                    'user': res.json().result,
+                    'role': res.json().role
+                };
+                return data;
             }
         );
     }
@@ -118,4 +122,54 @@ export class AuthenticationService {
                 return res;
             });
     }
+
+    getClass(): Promise<any> {
+        const headers = new Headers();
+        headers.set('Content-Type', 'application/json');
+        headers.set('token', this.token);
+
+        return this.http.get('/api/class', { search: { token: this.token } }).toPromise().then(
+            res => {
+                let data = {
+                    'user': res.json().result,
+                    'role': res.json().role
+                };
+                return data;
+            }
+        );
+    }
+
+    updateClassPic(file: any, id: any): Promise<any> {
+        const headers = new Headers({'Content-Type': 'application/json'});
+        headers.set('token', this.token);
+        const data = {
+            'avatar': file,
+            'user_id': id,
+            'token': this.token
+        };
+
+        return this.http.post('/api/user/update/update/avatar', JSON.stringify(data), {headers: headers})
+            .toPromise()
+            .then(res => {
+                return res;
+            });
+    }
+
+    createClass(data: any, picture: any): Promise<any> {
+        const headers = new Headers({'Content-Type': 'application/json'});
+        headers.set('token', this.token);
+
+        const request = {
+            'data': data,
+            'picture': picture,
+            'token': this.token
+        };
+
+        return this.http.post('/api/user/create/class', JSON.stringify(request), {headers: headers})
+            .toPromise()
+            .then((res: any)=> {
+                return res._body;
+            });
+    }
+
 }
